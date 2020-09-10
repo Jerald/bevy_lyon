@@ -54,7 +54,6 @@ impl LyonMeshBuilder
     /// Uses [`TriangleStrip`](PrimitiveTopology::TriangleStrip) as the default primitive topology.
     pub fn build(self) -> Mesh
     {
-        LyonMeshBuilder::
         self.build_with_topology(PrimitiveTopology::TriangleStrip)
     }
 
