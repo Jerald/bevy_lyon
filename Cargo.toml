@@ -4,6 +4,7 @@ version = "0.1.0"
 authors = ["Matrixmage <osmithsi@sfu.ca>"]
 edition = "2018"
 license = "MIT"
+description = "A simple library to provide access to lyon-powered meshes in bevy!"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
