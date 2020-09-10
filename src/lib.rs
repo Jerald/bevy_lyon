@@ -1,4 +1,5 @@
 pub mod mesh_builder;
+
 pub mod shapes;
 
 #[doc(inline)]
@@ -15,3 +16,6 @@ pub use mesh_builder::{
 
     LyonMeshBuilder,
 };
+
+#[doc(no_inline)]
+pub use lyon::math;

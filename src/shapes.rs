@@ -1,3 +1,12 @@
+//! Shapes for easily constructing basic meshes with [`LyonMeshBuilder`].
+//!
+//! # Overview
+//! 
+//! This module provides a set of shapes consumable by the [`LyonMeshBuilder`] which draws some simple basic shapes.
+//! The shapes provided here match with the shapes that have simple tesselators provided by `lyon`.
+//! 
+//! [`LyonMeshBuilder`]: crate::mesh_builder::LyonMeshBuilder
+
 use smart_default::*;
 
 use lyon::{
@@ -6,19 +15,17 @@ use lyon::{
         self as tess,
         basic_shapes,
     },
-    self
 };
 
 use super::mesh_builder::BevyBuffersBuilder;
 
-/// Represents something capable of being built into a shape with the `LyonMeshBuilder`.
+/// Represents something capable of being built into a shape with the [`LyonMeshBuilder`](crate::mesh_builder::LyonMeshBuilder).
 pub trait LyonShapeBuilder
 {
     fn build(self, builder: &mut BevyBuffersBuilder);
 }
 
-/// Allow all closures and functions that take in a mutable reference to a `BevyBuffersBuilder` to be considered a shape builder.
-///
+/// Allow all closures and functions that take in a mutable reference to a [`BevyBuffersBuilder`] to be considered a shape builder.
 /// Permits ergonomically using a closure (or function) for complicated custom meshes.
 impl<F> LyonShapeBuilder for F
 where
@@ -50,6 +57,7 @@ impl LyonShapeBuilder for FillCircle<'_>
     }
 }
 
+/// Requires the points to represent a convex shape. If the shape is concave the result will likely be incorrect.
 #[derive(Debug, SmartDefault)]
 pub struct FillConvexPolyline<'a, I, G>
 where
@@ -223,6 +231,7 @@ where
     I: IntoIterator<Item=math::Point> + Default
 {
     pub points: I,
+    #[default = true]
     pub is_closed: bool,
     #[default(&tess::StrokeOptions::DEFAULT)]
     pub options: &'a tess::StrokeOptions,

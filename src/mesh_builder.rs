@@ -1,3 +1,12 @@
+//! 
+//! 
+//! 
+//! 
+//! 
+//! 
+//! 
+
+
 use bevy::render::{
     mesh::{
         VertexAttribute,
@@ -16,14 +25,14 @@ use lyon::{
 
 use super::shapes::LyonShapeBuilder;
 
-/// Type alias for the type of a mesh index in bevy.
+/// Type alias for the type of a mesh index in [`bevy`].
 pub type BevyIndex = u32;
-/// Type alias for a `VertexBuffers` of `BevyVertex`'s and `BevyIndex`'s.
+/// Type alias for a [`VertexBuffers`](tess::VertexBuffers) of [`BevyVertex`](BevyVertex)'s and [`BevyIndex`](BevyIndex)'s.
 pub type BevyVertexBuffers = tess::VertexBuffers<BevyVertex, BevyIndex>;
-/// Type alias for a buffer builder that contains the information to properly convert lyon points to `BevyVertex`'s and `BevyIndex`'s.
+/// Type alias for a [`BuffersBuilder`](tess::BuffersBuilder) that contains the information to properly convert [`lyon`] points to [`BevyVertex`]'s and [`BevyIndex`]'s.
 pub type BevyBuffersBuilder<'a> = tess::BuffersBuilder<'a, BevyVertex, BevyIndex, BevyVertexConstructor>;
 
-/// Builder that provides customizable functionality to create `lyon` tessellated meshes and build them so `bevy` can consume them.
+/// Builder that provides customizable functionality to create [`lyon`](lyon) tessellated meshes and build them so [`bevy`](bevy) can consume them.
 #[derive(Debug, Clone)]
 pub struct LyonMeshBuilder
 {
@@ -42,15 +51,16 @@ impl LyonMeshBuilder
 
     /// Finish the building and produce the final mesh.
     ///
-    /// Uses TriangleStrip as the default primitive topology.
+    /// Uses [`TriangleStrip`](PrimitiveTopology::TriangleStrip) as the default primitive topology.
     pub fn build(self) -> Mesh
     {
+        LyonMeshBuilder::
         self.build_with_topology(PrimitiveTopology::TriangleStrip)
     }
 
-    /// Finishes a mesh using a custom specified `PrimitiveTopology`.
+    /// Finishes a mesh using a specific [`PrimitiveTopology`].
     ///
-    /// Prefer using `build()` as its default works in the vast majority of cases.
+    /// Prefer using [`LyonMeshBuilder::build`] as its default topology works in the vast majority of cases.
     pub fn build_with_topology(self, topology: PrimitiveTopology) -> Mesh
     {
         Mesh {
@@ -60,15 +70,30 @@ impl LyonMeshBuilder
         }
     }
 
-    /// Adds a shape specified by its `LyonShapeBuilder` implementation to the mesh being constructed.
+    /// Adds a shape specified by argument's [`LyonShapeBuilder`] implementation to the mesh being constructed.
     pub fn with(mut self, shape: impl LyonShapeBuilder) -> Self
     {
         shape.build(&mut self.buffers_builder());
         self
     }
 
-    /// A convenience function that makes a new `LyonMeshBuilder` and builds it with only the single shape provided.
-    pub fn only(shape: impl LyonShapeBuilder) -> Mesh
+    /// A convenience function that makes a new [`LyonMeshBuilder`] and builds it with only the single shape provided.
+    ///
+    /// This is equivalent to calling:
+    /// ```rust
+    /// # use bevy::render::mesh::Mesh;
+    /// # use bevy_lyon::{
+    /// #    LyonShapeBuilder,
+    /// #    LyonMeshBuilder
+    /// # };
+    /// # fn with_only_example(shape: impl LyonShapeBuilder) -> Mesh
+    /// # {
+    /// LyonMeshBuilder::new()
+    ///     .with(shape)
+    ///     .build()
+    /// # }
+    /// ```
+    pub fn with_only(shape: impl LyonShapeBuilder) -> Mesh
     {
         LyonMeshBuilder::new()
             .with(shape)
