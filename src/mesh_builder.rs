@@ -7,7 +7,7 @@
 //!
 
 use bevy::render::{
-    mesh::{Mesh, VertexAttribute},
+    mesh::{Indices, Mesh, VertexAttributeValues},
     pipeline::PrimitiveTopology,
 };
 
@@ -51,11 +51,28 @@ impl LyonMeshBuilder {
     ///
     /// Prefer using [`LyonMeshBuilder::build`] as its default topology works in the vast majority of cases.
     pub fn build_with_topology(self, topology: PrimitiveTopology) -> Mesh {
-        Mesh {
-            primitive_topology: topology,
-            attributes: self.verts_to_attributes(),
-            indices: Some(self.geometry.indices),
+        let mut mesh = Mesh::new(topology);
+        let mut positions = vec![];
+        let mut normals = vec![];
+        let mut uvs = vec![];
+
+        for vertex in &self.geometry.vertices {
+            positions.push(vertex.pos);
+            normals.push(vertex.norm);
+            uvs.push(vertex.uv);
         }
+
+        mesh.set_attribute(
+            Mesh::ATTRIBUTE_POSITION,
+            VertexAttributeValues::Float3(positions),
+        );
+        mesh.set_attribute(
+            Mesh::ATTRIBUTE_NORMAL,
+            VertexAttributeValues::Float3(normals),
+        );
+        mesh.set_attribute(Mesh::ATTRIBUTE_UV_0, VertexAttributeValues::Float2(uvs));
+        mesh.set_indices(Some(Indices::U32(self.geometry.indices)));
+        mesh
     }
 
     /// Adds a shape specified by argument's [`LyonShapeBuilder`] implementation to the mesh being constructed.
@@ -89,25 +106,6 @@ impl LyonMeshBuilder {
         &mut self,
     ) -> tess::BuffersBuilder<BevyVertex, BevyIndex, BevyVertexConstructor> {
         tess::BuffersBuilder::new(&mut self.geometry, BevyVertexConstructor)
-    }
-
-    /// Internal utility function that transforms an iterator of `BevyVertex`'s into the proper array of vertex attributes.
-    fn verts_to_attributes(&self) -> Vec<VertexAttribute> {
-        let mut positions = vec![];
-        let mut normals = vec![];
-        let mut uvs = vec![];
-
-        for vertex in &self.geometry.vertices {
-            positions.push(vertex.pos);
-            normals.push(vertex.norm);
-            uvs.push(vertex.uv);
-        }
-
-        vec![
-            VertexAttribute::position(positions),
-            VertexAttribute::normal(normals),
-            VertexAttribute::uv(uvs),
-        ]
     }
 }
 

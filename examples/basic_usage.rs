@@ -4,7 +4,7 @@ use bevy_lyon::{math, shapes, LyonMeshBuilder};
 
 fn main() {
     App::build()
-        .add_default_plugins()
+        .add_plugins(DefaultPlugins)
         .add_startup_system(setup_system.system())
         .run();
 }
@@ -50,7 +50,7 @@ fn setup_system(
         .spawn(Camera2dComponents::default())
         .spawn(SpriteComponents {
             mesh: fill_circle,
-            material: red,
+            material: red.clone_weak(),
             sprite: Sprite::new(Vec2::new(1.0, 1.0)),
             ..Default::default()
         })
